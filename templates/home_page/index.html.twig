@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Главная страница{% endblock %}
+
+{% block body %}
+    <style>
+        .example-wrapper {
+            margin: 1em auto;
+            max-width: 800px;
+            width: 95%;
+            font: 18px/1.5 sans-serif;
+        }
+
+        .example-wrapper code {
+            background: #F5F5F5;
+            padding: 2px 6px;
+        }
+    </style>
+
+    <div class="example-wrapper">
+        <h1 class="display-4">Добро пожаловать на главную страницу новостного портала newsLab</h1>
+    </div>
+    {% if news|length > 0 %}
+        <div class="row justify-content-md-center">
+        {% for new in news %}
+            <div class="col">
+                <div class="card m-2" style="width: 18rem;">
+                    <div class="card-body">
+                        <a href="{{ path('news_show', { id: new.id }) }}"><h5 class="card- text-body">{{ new.title }}</h5></a>
+                        <p class="card-text">{{ new.annotation }}</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Кол-во просмотров: {{ new.getPreviewCounter()|default('Нет просмотров') }}</li>
+                            <li class="list-group-item">Кол-во комментариев: {{ new.getComments()|length }}</li>
+                            <li class="list-group-item">Дата публикации: {{ new.dateAdded|date('Y-m-d') }}</li>
+                        </ul>
+                        <a href="{{ path('news_show', { id: new.id }) }}" class="card-link">Перейти к новости</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

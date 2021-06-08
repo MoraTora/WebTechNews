@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}News{% endblock %}
+
+{% block body %}
+    <h1 class="display-1 m-2">{{ news.title }}</h1>
+    <p class="lead">{{ news.annotation }}</p>
+    <blockquote class="blockquote">
+        <p class="mb-2">{{ news.newstext }}</p>
+        <footer class="blockquote-footer  mt-1 mb-3">Кол-во просмотров:{{ news.getPreviewCounter()|default('Нет просмотров') }}</footer>
+        <footer class="blockquote-footer">{{ news.dateAdded ? news.dateAdded|date('Y-m-d') : '' }}</footer>
+    </blockquote>
+    <a class="btn btn-primary" href="{{ path('home_page') }}">Вернуться на главную страницу</a>
+    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') %}
+        {% if news.author == app.user.username or is_granted('ROLE_ADMIN') %}
+            <a class="btn btn-success" href="{{ path('news_edit', {'id': news.id}) }}">Редактировать</a>
+        {% endif %}
+    {% endif %}
+        <h4 class="">Комментарии пользователей:</h4>
+        {% for comment in comments %}
+            <blockquote class="blockquote border">
+                <div class="shadow-lg  p-3 mb-5 bg-white">
+                    <p class="mb-1 ">{{ comment.text }}</p>
+                    <footer class="blockquote-footer m-1">{{ comment.author }}: <cite
+                                title="Source Title">{{ comment.createdAt|date('Y-m-d') }}</cite></footer>
+                </div>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <div class="btn btn-danger">
+                        {{ include('comment/_delete_form.html.twig', {'button_label': 'Удалить'}) }}
+                    </div>
+                {% endif %}
+            </blockquote>
+        {% endfor %}
+    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_USER') %}
+        {{ include('comment/_form.html.twig') }}
+    {% endif %}
+    {# <a href="{{ path('news_index') }}">back to list</a>
+
+    <a href="{{ path('news_edit', {'id': news.id}) }}">edit</a> #}
+
+{% endblock %}
